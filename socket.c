@@ -172,6 +172,7 @@ ssize_t socket_client_recv_partial(struct socket_client *state, void *msg, size_
 {
 	setsockopt_int(state->fd, SOL_SOCKET, SO_RCVLOWAT, min_length);
 	ssize_t res = recv(state->fd, msg, max_length, 0);
+	setsockopt_int(state->fd, SOL_SOCKET, SO_RCVLOWAT, 1);
 	if (res == -1) {
 		socket_error_num("receive from", &state->addr, &state->port);
 		return -1;
@@ -183,6 +184,7 @@ bool socket_client_recv(struct socket_client *state, void *msg, size_t length)
 {
 	setsockopt_int(state->fd, SOL_SOCKET, SO_RCVLOWAT, length);
 	ssize_t res = recv(state->fd, msg, length, MSG_WAITALL);
+	setsockopt_int(state->fd, SOL_SOCKET, SO_RCVLOWAT, 1);
 	if (res == -1) {
 		socket_error_num("receive from", &state->addr, &state->port);
 		return false;
@@ -202,6 +204,7 @@ size_t socket_client_peek(struct socket_client *state, void *msg, size_t length)
 {
 	setsockopt_int(state->fd, SOL_SOCKET, SO_RCVLOWAT, length);
 	ssize_t res = recv(state->fd, msg, length, MSG_WAITALL | MSG_PEEK);
+	setsockopt_int(state->fd, SOL_SOCKET, SO_RCVLOWAT, 1);
 	if (res == -1) {
 		socket_error_num("receive from", &state->addr, &state->port);
 		return 0;
